@@ -17,7 +17,6 @@ import random
 
 
 def is_chinese(uchar):
-    """判断一个unicode是否是汉字"""
     if uchar >= u'\u4e00' and uchar <= u'\u9fa5':
         return True
     else:
@@ -65,8 +64,8 @@ def read_txt(txtname, stopword):
             line_feature['hypontext'] = np.array(hypon_out_line)
             line_feature['hypername'] = line_list[2]
             line_feature['hypertext'] = np.array(hyper_out_line)
-            line_feature['hyper_d_feature'] = line_list[4]
-            line_feature['label'] = line_list[5]
+            line_feature['hyper_d_feature'] = np.array([float(_) for _ in line_list[4].split(',')])
+            line_feature['label'] = int(line_list[5].strip())
             feature.append(line_feature)
     return feature, hypon_Maxlen, hyper_Maxlen
 
@@ -74,9 +73,9 @@ def read_txt(txtname, stopword):
 def data_padding(data, hypon_Maxlen, hyper_Maxlen):
     for line in data:
         len_hypon = np.shape(line['hypontext'])[0]
-        line['hypontext'] = np.pad(line['hypontext'], ((0, hypon_Maxlen-len_hypon), (0, 0)), 'constant')
+        line['hypontext'] = np.pad(line['hypontext'], ((0, hypon_Maxlen - len_hypon), (0, 0)), 'constant')
         len_hyper = np.shape(line['hypertext'])[0]
-        line['hypertext'] = np.pad(line['hypertext'], ((0, hyper_Maxlen-len_hyper), (0, 0)), 'constant')
+        line['hypertext'] = np.pad(line['hypertext'], ((0, hyper_Maxlen - len_hyper), (0, 0)), 'constant')
     return data
 
 
@@ -91,16 +90,38 @@ def batch_iter(data, batchsize, num_epochs, shuffle=True):
             random.shuffle(data)
         for batch_num in range(num_batches_per_epoch):
             start_index = batchsize * batch_num
-            end_index = min((batch_num + 1) * batchsize, data_size)
+            end_index = (batch_num + 1) * batchsize
             yield data[start_index:end_index]
+
+
+def get_input(batch_data, batchsize):
+    batch_x = []
+    batch_y = []
+    batch_d_feature = []
+    batch_label = []
+    for line in batch_data:
+        x = line['hypontext']
+        batch_x.append(x)
+        y = line['hypertext']
+        batch_y.append(y)
+        d_feature = line['hyper_d_feature']
+        batch_d_feature.append(d_feature)
+        label = line['label']
+        # print('111111')
+        # label = int(label)
+        batch_label.append(label)
+    batch_label = np.array(batch_label)
+    a = np.zeros([batchsize, 2])
+    a[np.arange(batchsize), batch_label] = 1
+    return np.array(batch_x), np.array(batch_y), np.array(batch_d_feature), a
 
 
 # test_code
 
-if __name__ == '__main__':
-    data, hypon_Maxlen, hyper_Maxlen = read_txt('data_example.txt', 'stopword.txt')
-    data = data_padding(data, hypon_Maxlen, hyper_Maxlen)
-    print(data[1]["hypertext"])
+# if __name__ == '__main__':
+#     data, hypon_Maxlen, hyper_Maxlen = read_txt('data_example.txt', 'stopword.txt')
+#     data = data_padding(data, hypon_Maxlen, hyper_Maxlen)
+#     print(data[1]["hypertext"])
 
 
     # for i in batch_iter(data,2,5):
