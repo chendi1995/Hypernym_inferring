@@ -32,7 +32,4 @@ if __name__ == '__main__':
             for batch_data in batch_iter(data, batch_size, nums_epoch):
                 X, Y, D_Feature, batch_label = get_input(batch_data, len(batch_data))
                 model.batch_size = len(batch_data)
-                X_ = sess.run(model.logits, feed_dict={model.X: X, model.Y: Y, model.D: D_Feature})
-                print(np.shape(X_))
-                print(X_)
-                break
+                _,loss,accuracy = sess.run([model.logits,model.cross_entropy,model.accuracy], feed_dict={model.X: X, model.Y: Y, model.D: D_Feature})
