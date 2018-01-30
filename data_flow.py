@@ -64,8 +64,8 @@ def read_txt(txtname, stopword):
             line_feature['hypontext'] = np.array(hypon_out_line)
             line_feature['hypername'] = line_list[2]
             line_feature['hypertext'] = np.array(hyper_out_line)
-            line_feature['hyper_d_feature'] = np.array([float(_) for _ in line_list[4].split(',')])
-            line_feature['label'] = int(line_list[5].strip())
+            line_feature['hyper_d_feature'] = np.array([1,1,1,1])
+            line_feature['label'] = int(line_list[4].strip())
             feature.append(line_feature)
     return feature, hypon_Maxlen, hyper_Maxlen
 
@@ -79,19 +79,19 @@ def data_padding(data, hypon_Maxlen, hyper_Maxlen):
     return data
 
 
-def batch_iter(data, batchsize, num_epochs, shuffle=True):
-    data_size = len(data)
-    if data_size % batchsize:
-        num_batches_per_epoch = int(data_size / batchsize) + 1
-    else:
-        num_batches_per_epoch = int(data_size / batchsize)
-    for epoch in range(num_epochs):
-        if shuffle:
-            random.shuffle(data)
-        for batch_num in range(num_batches_per_epoch):
-            start_index = batchsize * batch_num
-            end_index = (batch_num + 1) * batchsize
-            yield data[start_index:end_index]
+# def batch_iter(data, batchsize, num_epochs, shuffle=True):
+#     data_size = len(data)
+#     if data_size % batchsize:
+#         num_batches_per_epoch = int(data_size / batchsize) + 1
+#     else:
+#         num_batches_per_epoch = int(data_size / batchsize)
+#     for epoch in range(num_epochs):
+#         if shuffle:
+#             random.shuffle(data)
+#         for batch_num in range(num_batches_per_epoch):
+#             start_index = batchsize * batch_num
+#             end_index = (batch_num + 1) * batchsize
+#             yield data[start_index:end_index],epoch
 
 
 def get_input(batch_data, batchsize):

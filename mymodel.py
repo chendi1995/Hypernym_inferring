@@ -14,18 +14,19 @@ from tensorflow.contrib import rnn
 
 
 class CustomModel:
-    def __init__(self, XMAXLEN, YMAXLEN, embedding_size, batch_size=100,learning_rate = 0.1):
+    def __init__(self, ops, XMAXLEN, YMAXLEN, embedding_size, learning_rate=0.1):
         self.XMAXLEN = XMAXLEN
         self.YMAXLEN = YMAXLEN
-        self.batch_size = batch_size
-        self.lstm_unit = 128
-        self.drop_rate = 0.5
+        self.lstm_unit = ops.lstm_unit
+        self.drop_rate = ops.drop_rate
         self.embedding_size = embedding_size
         self.learning_rate = learning_rate
+
     def build_model(self):
         with tf.variable_scope("input_layer"):
             self.X = tf.placeholder("float", [None, self.XMAXLEN, self.embedding_size])
-            self.Y = tf.placeholder("float", [None, self.YMAXLEN, self.embedding_size])
+            self.Y = tf.placeholder("float", [None, self.
+                                    YMAXLEN, self.embedding_size])
             self.D = tf.placeholder("float", [None, 4])
             self.label = tf.placeholder("float", [None, 2])
         with tf.variable_scope("encode_x"):
@@ -85,15 +86,20 @@ class CustomModel:
             x_outputs = tf.transpose(x_outputs, [1, 0, 2])
             for i in range(self.XMAXLEN):
                 mx.append(tf.matmul(tf.nn.tanh(tf.matmul(x_outputs[i], Ucx) + bnx), Uax))
-            mx = tf.reshape(mx, [self.XMAXLEN, self.batch_size])
+            mx = tf.reshape(mx, [self.XMAXLEN, -1])
             mx = tf.transpose(mx, [1, 0])
             alphax = tf.nn.softmax(mx)
-            sx = tf.reshape(alphax, [self.batch_size, self.XMAXLEN, 1])
+            # sx = tf.reshape(alphax, [self.batch_size, self.XMAXLEN, 1])
             x_outputs = tf.transpose(x_outputs, [1, 0, 2])
-            x_att = []
-            for i in range(self.batch_size):
-                x_att.append(tf.transpose(tf.matmul(tf.transpose(x_outputs[i]), sx[i])))
-            x_att = tf.reshape(x_att, [self.batch_size, 2 * self.lstm_unit])
+
+            sx = tf.expand_dims(alphax, -1)
+            x_outputs = tf.transpose(x_outputs, [0, 2, 1])
+            x_att = tf.matmul(x_outputs, sx)
+            x_att = tf.reshape(x_att, [-1, 2 * self.lstm_unit])
+
+            # for i in range(self.batch_size):
+            #     x_att.append(tf.transpose(tf.matmul(tf.transpose(x_outputs[i]), sx[i])))
+            # x_att = tf.reshape(x_att, [self.batch_size, 2 * self.lstm_unit])
 
             Yn = tf.reduce_mean(y_outputs, 1)
             Uby = tf.Variable(tf.random_normal([2 * self.lstm_unit, 2 * self.lstm_unit]), name='Uby')
@@ -104,34 +110,34 @@ class CustomModel:
             y_outputs = tf.transpose(y_outputs, [1, 0, 2])
             for i in range(self.YMAXLEN):
                 my.append(tf.matmul(tf.nn.tanh(tf.matmul(y_outputs[i], Ucy) + bny), Uay))
-            my = tf.reshape(my, [self.YMAXLEN, self.batch_size])
+            my = tf.reshape(my, [self.YMAXLEN, -1])
             my = tf.transpose(my, [1, 0])
             alphay = tf.nn.softmax(my)
-            sy = tf.reshape(alphay, [self.batch_size, self.YMAXLEN, 1])
             y_outputs = tf.transpose(y_outputs, [1, 0, 2])
-            y_att = []
-            for i in range(self.batch_size):
-                y_att.append(tf.transpose(tf.matmul(tf.transpose(y_outputs[i]), sy[i])))
-            y_att = tf.reshape(y_att, [self.batch_size, 2 * self.lstm_unit])
 
-        with tf.variable_scope("concat_hyper_feature"):
-            D_feature = tf.layers.dense(inputs=self.D, units=2 * self.lstm_unit, activation=None)
-            self.y_feature = tf.add(D_feature, y_att)
+            sy = tf.expand_dims(alphay, -1)
+            y_outputs = tf.transpose(y_outputs, [0, 2, 1])
+            y_att = tf.matmul(y_outputs, sy)
+            y_att = tf.reshape(y_att, [-1, 2 * self.lstm_unit])
 
-        with tf.variable_scope("concact_layer"):
-            output = tf.concat([x_att, self.y_feature], 1)
-            output_drop = tf.nn.dropout(output, self.drop_rate)
+            with tf.variable_scope("concat_hyper_feature"):
+                D_feature = tf.layers.dense(inputs=self.D, units=2 * self.lstm_unit, activation=None)
+                self.y_feature = tf.add(D_feature, y_att)
 
-        with tf.variable_scope("dense"):
-            self.logits = tf.layers.dense(inputs=output_drop, units=2, activation=None)
+            with tf.variable_scope("concact_layer"):
+                output = tf.concat([x_att, self.y_feature], 1)
+                output_drop = tf.nn.dropout(output, self.drop_rate)
 
-        with tf.variable_scope("loss"):
-            self.cross_entropy = tf.reduce_mean(
-                tf.nn.softmax_cross_entropy_with_logits(labels=self.label, logits=self.logits))
-        tf.summary.scalar('cross_entropy', self.cross_entropy)
+            with tf.variable_scope("dense"):
+                self.logits = tf.layers.dense(inputs=output_drop, units=2, activation=None)
 
-        with tf.variable_scope("optimizer"):
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.cross_entropy)
-            correct_pred = tf.equal(tf.argmax(self.logits, 1), tf.argmax(self.label, 1))
-            self.accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-        tf.summary.scalar('accuracy', self.accuracy)
+            with tf.variable_scope("loss"):
+                self.cross_entropy = tf.reduce_mean(
+                    tf.nn.softmax_cross_entropy_with_logits(labels=self.label, logits=self.logits))
+            tf.summary.scalar('cross_entropy', self.cross_entropy)
+
+            with tf.variable_scope("optimizer"):
+                self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.cross_entropy)
+                correct_pred = tf.equal(tf.argmax(self.logits, 1), tf.argmax(self.label, 1))
+                self.accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+            tf.summary.scalar('accuracy', self.accuracy)
