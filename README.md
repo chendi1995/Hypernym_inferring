@@ -13,18 +13,12 @@ Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli 
 The first step trains a linear transformation matrix inspired by Mikolov et al. (2013) and Fu et al. (2014). The matrix is trained following the code from here.
 
 python train_transMat.py <training_data> <embeddings> <domains_file> <input_domain> <expand>
-
-<training_data> is a two-column text file, where column 1 has terms, and column 2 has hypernyms.
-
-<embeddings> is a binary or text file with embeddings in word2vec format (first line of the file should contain the following info: 
- 
-<num_vecs><space><numb_dimensions>.
-
-<domains_file> tab-separated file, column 1 has synsets, column 2 has their associated domain (e.g. bn:david_bowie<tab>Music)
-
-<input_domain> is a knowledge domain, e.g. 'music' or 'media'. It can have value ' ' for skipping the domain-wise term filtering.
-
-<expand> is an optional argument which can have either 'expanded' or ' ' value. Use "expand" if your data is at synset level, and your embeddings are at sense level. For example, a training instance may contain the synset performance.n.01 and you may have embeddings like performance_wn:performance and performance_wn:public_presentation.
+* <training_data> is a two-column text file, where column 1 has terms, and column 2 has hypernyms.
+* <embeddings> is a binary or text file with embeddings in word2vec format (first line of the file should contain the following info: 
+* <num_vecs><space><numb_dimensions>.
+* <domains_file> tab-separated file, column 1 has synsets, column 2 has their associated domain (e.g. bn:david_bowie<tab>Music)
+* <input_domain> is a knowledge domain, e.g. 'music' or 'media'. It can have value ' ' for skipping the domain-wise term filtering.
+* <expand> is an optional argument which can have either 'expanded' or ' ' value. Use "expand" if your data is at synset level, and your embeddings are at sense level. For example, a training instance may contain the synset performance.n.01 and you may have embeddings like performance_wn:performance and performance_wn:public_presentation.
 The above saves a filtered vectors file to speed up testing, called vectors_domain.txt, and the transformation matrix in text format transformation_matrix+_domain+.txt, or transformation_matrix_general.txt if <input_domain>='none'.
 
 ## Predict
