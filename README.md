@@ -46,7 +46,8 @@ Evaluate the performance of your hypernym discovery algorithm with:
 `python evaluate.py <gold_file> <predictions_file>                                                                                     ` 
 * <gold_file> Text file where column 1 is the term, and from column 2 are valid hypernyms.
 * <predictions_file> Text file where column 1 is the term, and columns 2 onwards are either <candidate><space><score> pairs, or simplpy the candidates.
-* It will save a <predictions_file>+__results.txt file with classic IR metrics computed on your data, such as MRR, MAP, P@K and R-P. The code for computing these metrics comes from here.
+
+It will save a <predictions_file>+__results.txt file with classic IR metrics computed on your data, such as MRR, MAP, P@K and R-P. The code for computing these metrics comes from here.
 
 
 
