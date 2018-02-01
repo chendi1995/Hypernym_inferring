@@ -12,7 +12,7 @@ Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli 
 ## Train
 The first step trains a linear transformation matrix inspired by Mikolov et al. (2013) and Fu et al. (2014). The matrix is trained following the code from here.
 
-python train_transMat.py <training_data> <embeddings> <domains_file> <input_domain> <expand>
+`python train_transMat.py <training_data> <embeddings> <domains_file> <input_domain> <expand>` 
 * <training_data> is a two-column text file, where column 1 has terms, and column 2 has hypernyms.
 * <embeddings> is a binary or text file with embeddings in word2vec format (first line of the file should contain the following info: 
 * <num_vecs><space><numb_dimensions>.
