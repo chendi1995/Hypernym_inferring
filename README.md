@@ -6,8 +6,7 @@ xx, xx, xx and xx. Supervised Distributional Hypernym Discovery via Domain Adapt
 
 
 ##
-hyponym-hypernym pairs vectors
-Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli Bovi et al., 2015), as well as domain-filtered SensEmbed (Iacobacci et al., 2015) vectors and NASARI domain labels (Camacho-Collados et al., 2017) can be downloaded from here.
+Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli Bovi et al., 2015), as well as domain-filtered SensEmbed (Iacobacci et al., 2015) vectors and NASARI domain labels (Camacho-Collados et al., 2017) can be [downloaded] from here.(https://github.com/Jack-Cherish/Machine-Learning/blob/master/Regression/regression_old.py "悬停显示")
 
 
 ## Train
@@ -20,6 +19,7 @@ python train_transMat.py <training_data> <embeddings> <domains_file> <input_doma
 * <domains_file> tab-separated file, column 1 has synsets, column 2 has their associated domain (e.g. bn:david_bowie<tab>Music)
 * <input_domain> is a knowledge domain, e.g. 'music' or 'media'. It can have value ' ' for skipping the domain-wise term filtering.
 * <expand> is an optional argument which can have either 'expanded' or ' ' value. Use "expand" if your data is at synset level, and your embeddings are at sense level. For example, a training instance may contain the synset performance.n.01 and you may have embeddings like performance_wn:performance and performance_wn:public_presentation.
+
 The above saves a filtered vectors file to speed up testing, called vectors_domain.txt, and the transformation matrix in text format transformation_matrix+_domain+.txt, or transformation_matrix_general.txt if <input_domain>='none'.
 
 ## Predict
