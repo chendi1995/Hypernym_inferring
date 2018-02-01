@@ -5,6 +5,7 @@ Hypernym discovery problem aims to extract and discover such noun pairs that one
 xx, xx, xx and xx. Supervised Distributional Hypernym Discovery via Domain Adaptation. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing (EMNLP), pages 424–435, Austin, Texas, USA, 1-5 November 2016.
 
 
+##
 hyponym-hypernym pairs vectors
 Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli Bovi et al., 2015), as well as domain-filtered SensEmbed (Iacobacci et al., 2015) vectors and NASARI domain labels (Camacho-Collados et al., 2017) can be downloaded from here.
 
