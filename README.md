@@ -6,7 +6,7 @@ xx, xx, xx and xx. Supervised Distributional Hypernym Discovery via Domain Adapt
 
 
 ##
-Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli Bovi et al., 2015), as well as domain-filtered SensEmbed (Iacobacci et al., 2015) vectors and NASARI domain labels (Camacho-Collados et al., 2017) can be [downloaded] from here.(https://github.com/Jack-Cherish/Machine-Learning/blob/master/Regression/regression_old.py "悬停显示")
+Training disambiguated hyponym-hypernym pairs from Wikidata and KB-Unify (Delli Bovi et al., 2015), as well as domain-filtered SensEmbed (Iacobacci et al., 2015) vectors and NASARI domain labels (Camacho-Collados et al., 2017) can be (downloaded https://github.com/Jack-Cherish/Machine-Learning/blob/master/Regression/regression_old.py) from here.
 
 
 ## Train
