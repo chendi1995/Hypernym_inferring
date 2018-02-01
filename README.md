@@ -52,11 +52,8 @@ It will save a <predictions_file>+__results.txt file with classic IR metrics com
 
 ## References
 Camacho-Collados, J., & Navigli, R. (2017). BabelDomains: Large-Scale Domain Labeling of Lexical Resources. EACL 2017, 223.
-
 Iacobacci, I., Pilehvar, M. T., & Navigli, R. (2015). SensEmbed: Learning Sense Embeddings for Word and Relational Similarity. In ACL (1) (pp. 95-105).
-
 Mikolov, T., Le, Q. V., & Sutskever, I. (2013). Exploiting similarities among languages for machine translation. arXiv preprint arXiv:1309.4168.
-
 Fu, R., Guo, J., Qin, B., Che, W., Wang, H., & Liu, T. (2014). Learning Semantic Hierarchies via Word Embeddings. In ACL (1) (pp. 1199-1209).
 
 
