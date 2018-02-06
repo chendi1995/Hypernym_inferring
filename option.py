@@ -20,6 +20,7 @@ def getarg():
     parser.add_argument('--lstm_unit',type=int)
     parser.add_argument('--batchsize', type=int)
     parser.add_argument('--epochs', type=int)
+    parser.add_argument('--model_path',type=str,default='/storage/chendi/entailment/')
     parser.add_argument('--drop_rate',type=float,default=0.5)
     parser.add_argument('--shuffle', type=bool, default=True)
     args = parser.parse_args()

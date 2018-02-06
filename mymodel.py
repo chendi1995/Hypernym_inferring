@@ -95,7 +95,7 @@ class CustomModel:
             sx = tf.expand_dims(alphax, -1)
             x_outputs = tf.transpose(x_outputs, [0, 2, 1])
             x_att = tf.matmul(x_outputs, sx)
-            x_att = tf.reshape(x_att, [-1, 2 * self.lstm_unit])
+            self.x_att = tf.reshape(x_att, [-1, 2 * self.lstm_unit])
 
             # for i in range(self.batch_size):
             #     x_att.append(tf.transpose(tf.matmul(tf.transpose(x_outputs[i]), sx[i])))
@@ -120,24 +120,22 @@ class CustomModel:
             y_att = tf.matmul(y_outputs, sy)
             y_att = tf.reshape(y_att, [-1, 2 * self.lstm_unit])
 
-            with tf.variable_scope("concat_hyper_feature"):
-                D_feature = tf.layers.dense(inputs=self.D, units=2 * self.lstm_unit, activation=None)
-                self.y_feature = tf.add(D_feature, y_att)
+        with tf.variable_scope("concat_hyper_feature"):
+            D_feature = tf.layers.dense(inputs=self.D, units=2 * self.lstm_unit, activation=None)
+            self.y_feature = tf.add(D_feature, y_att)
 
-            with tf.variable_scope("concact_layer"):
-                output = tf.concat([x_att, self.y_feature], 1)
-                output_drop = tf.nn.dropout(output, self.drop_rate)
+        with tf.variable_scope("concact_layer"):
+            output = tf.concat([self.x_att, self.y_feature], 1)
+            output_drop = tf.nn.dropout(output, self.drop_rate)
 
-            with tf.variable_scope("dense"):
-                self.logits = tf.layers.dense(inputs=output_drop, units=2, activation=None)
+        with tf.variable_scope("dense_layer"):
+            self.logits = tf.layers.dense(inputs=output_drop, units=2, activation=None)
 
-            with tf.variable_scope("loss"):
-                self.cross_entropy = tf.reduce_mean(
-                    tf.nn.softmax_cross_entropy_with_logits(labels=self.label, logits=self.logits))
-            tf.summary.scalar('cross_entropy', self.cross_entropy)
+        with tf.variable_scope("loss"):
+            self.cross_entropy = tf.reduce_mean(
+                tf.nn.softmax_cross_entropy_with_logits(labels=self.label, logits=self.logits))
 
-            with tf.variable_scope("optimizer"):
-                self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.cross_entropy)
-                correct_pred = tf.equal(tf.argmax(self.logits, 1), tf.argmax(self.label, 1))
-                self.accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-            tf.summary.scalar('accuracy', self.accuracy)
+        with tf.variable_scope("optimizer"):
+            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.cross_entropy)
+            correct_pred = tf.equal(tf.argmax(self.logits, 1), tf.argmax(self.label, 1))
+            self.accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))

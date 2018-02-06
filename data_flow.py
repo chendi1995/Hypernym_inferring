@@ -14,6 +14,7 @@ from gensim.models import Word2Vec
 import re
 import numpy as np
 import random
+import json
 
 
 def is_chinese(uchar):
@@ -64,10 +65,38 @@ def read_txt(txtname, stopword):
             line_feature['hypontext'] = np.array(hypon_out_line)
             line_feature['hypername'] = line_list[2]
             line_feature['hypertext'] = np.array(hyper_out_line)
-            line_feature['hyper_d_feature'] = np.array([1,1,1,1])
+            line_feature['hyper_d_feature'] = np.array([1, 1, 1, 1])
             line_feature['label'] = int(line_list[4].strip())
             feature.append(line_feature)
     return feature, hypon_Maxlen, hyper_Maxlen
+
+
+def read_eng(txtname):
+    word2vec_model = Word2Vec.load(model_file)
+    hypon_Maxlen = 0
+    hyper_Maxlen = 0
+    feature = []
+    with open(txtname, 'r') as f:
+        for line in f.readlines():
+            line_list = json.loads(line.strip())
+            line_feature = {}
+            hypon_out_line = []
+            hyper_out_line = []
+            for word in line_list['Hyponym']['Text_desc'].split(' '):
+                hypon_out_line.append(word2vec_model[word])
+            for word in line_list['Hypernym']['Text_desc'].split(' '):
+                hyper_out_line.append(word2vec_model[word])
+            hypon_Maxlen = max(hypon_Maxlen, len(hypon_out_line))
+            hyper_Maxlen = max(hyper_Maxlen, len(hyper_out_line))
+            line_feature['word_name'] = line_list['Hyponym']['Term']
+            line_feature['hypontext'] = np.array(hypon_out_line)
+            line_feature['hypername'] = line_list['Hyperym']['Term']
+            line_feature['hypertext'] = np.array(hyper_out_line)
+            line_feature['hyper_d_feature'] = np.array(line_list['Hypernym']['Structure_feature'])
+            line_feature['label'] = 1
+            feature.append(line_feature)
+    return feature, hypon_Maxlen, hyper_Maxlen
+
 
 
 def data_padding(data, hypon_Maxlen, hyper_Maxlen):
@@ -118,11 +147,5 @@ def get_input(batch_data, batchsize):
 
 # test_code
 
-# if __name__ == '__main__':
-#     data, hypon_Maxlen, hyper_Maxlen = read_txt('data_example.txt', 'stopword.txt')
-#     data = data_padding(data, hypon_Maxlen, hyper_Maxlen)
-#     print(data[1]["hypertext"])
-
-
-    # for i in batch_iter(data,2,5):
-    #     print(i[0]['word_name'])
+if __name__ == '__main__':
+    read_eng('mini_data2.txt')
