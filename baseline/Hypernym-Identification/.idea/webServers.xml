@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="398f0ef2-1955-4f76-b1a8-9b8375bcea3b" name="11" url="http://121.49.110.52">
+        <fileTransfer host="121.49.110.52" port="10011" rootFolder="/home/chendi" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="10011" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
