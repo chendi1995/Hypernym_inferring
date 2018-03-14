@@ -35,3 +35,18 @@ class DynamicMarginModel(sklearn.svm.SVC):
             norm = [np.linalg.norm(embedding1 - embedding2, ord=1)]
             X_embeddings.append(np.concatenate([embedding1, embedding2, norm]))
         return X_embeddings
+
+
+    def word_to_vector_new(self, X):
+        """Converts pair of words to concatenation of their embeddings."""
+        if not isinstance(X[0][0], str):
+            return X
+
+        X_embeddings = []
+        for word1, word2 in X:
+            embedding1 = self.word2vec_model[word1]
+            embedding2 = self.word2vec_model[word2]
+            # norm = [np.linalg.norm(embedding1 - embedding2, ord=1)]
+            # X_embeddings.append(np.concatenate([embedding1, embedding2, norm]))
+            X_embeddings = np.concatenate(embedding1,embedding2)
+        return X_embeddings
